@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-image: url('https://pixfeeds.com/images/photography/nature/1280-469850169-bright-summer-sky-with-clouds.jpg');
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 600px;
+            margin: 80px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .inputs {
+            padding: 2rem 0;
+            text-align: center;
+            background: lightblue;
+        }
+
+        .inputs input[type="text"] {
+            height: 4rem;
+            width: 20rem;
+            background: white;
+            font-weight: bold;
+            font-size: 1rem;
+            color: black;
+            padding: 20px;
+            border: none;
+            border-radius: 3px;
+            margin-right: 4px;
+        }
+
+        .inputs input[type="submit"] {
+            height: 3rem;
+            width: 6rem;
+            background: lightgreen;
+            font-weight: bold;
+            color: black;
+            font-size: 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .display {
+            text-align: center;
+            width: 100%;
+            color: #16a864;
+            margin-top: 20px;
+        }
+
+        .display h2, .display p {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <section class="main">
+            <section class="inputs">
+                <input type="text" placeholder="Enter Your City Name..." id="cityinput">
+                <input type="submit" value="Submit" id="submitBtn">
+            </section>
+
+            <section>
+                <div class="display">
+                    <h2 id="cityoutput"></h2>
+                    <p id="description"></p>
+                    <p id="temperature"></p>
+                    <p id="wind"></p>
+                </div>
+            </section>
+        </section>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var inputvalue = document.querySelector('#cityinput');
+            var btn = document.querySelector('#submitBtn');
+            var city = document.querySelector('#cityoutput');
+            var description = document.querySelector('#description');
+            var temp = document.querySelector('#temperature');
+            var wind = document.querySelector('#wind');
+            var apik = "d32d0518ef905237d9db4d4ede6fa100";  
+
+            function conversion(val) {
+                return (val - 273.15).toFixed(2);  // Conversion from Kelvin to Celsius
+            }
+
+            btn.addEventListener('click', function() {
+                fetch('https://api.openweathermap.org/data/2.5/weather?q=' + inputvalue.value + '&appid=' + apik)
+                    .then(response => response.json())
+                    .then(data => {
+                        var nameval = data.name;
+                        var descriptionval = data.weather[0].description;
+                        var temperature = data.main.temp;
+                        var windspeed = data.wind.speed;
+
+                        city.innerHTML = `Weather of <span>${nameval}</span>`;
+                        temp.innerHTML = `Temperature: <span>${conversion(temperature)} °C</span>`;
+                        description.innerHTML = `Sky Conditions: <span>${descriptionval}</span>`;
+                        wind.innerHTML = `Wind Speed: <span>${windspeed} km/h</span>`;
+                    })
+                    .catch(err => alert('You entered an incorrect city name'));
+            });
+        });
+    </script>
+</body>
+</html>
